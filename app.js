@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const a = document.createElement('a');
             a.className = 'category-card';
-            a.href = `portfolio.html?category=${cat.id}`;
+            a.href = `/portfolio?category=${cat.id}`;
             a.innerHTML = `
                 <div class="category-card-img-wrapper">
                     <img src="${imgSrc}" alt="${catTitle}" loading="lazy">
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     allFilters.forEach(f => f.classList.remove('active'));
                     e.target.classList.add('active');
                     const catId = e.target.getAttribute('data-filter');
-                    window.history.pushState({}, '', `portfolio.html?category=${catId}`);
+                    window.history.pushState({}, '', `/portfolio?category=${catId}`);
                     updateCategoryView(catId);
                 });
             });
@@ -326,6 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const href = link.getAttribute('href');
         // Only intercept same-site, non-anchor, non-target-blank links
         if (!href || href.startsWith('#') || href.startsWith('http') || link.target === '_blank') return;
+        // Skip links with query params (portfolio category links) to avoid issues
+        if (href.includes('?')) return;
         link.addEventListener('click', (e) => {
             e.preventDefault();
             document.body.classList.add('page-exit');
