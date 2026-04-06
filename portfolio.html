@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портфолио | Петър Пешев</title>
+    <meta name="description" content="Пълно портфолио на професионален фотограф Петър Пешев — рекламна, корпоративна, модна и портретна фотография.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="portfolio-page">
+
+    <header class="navbar scrolled">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/PPP-2.png" alt="Петър Пешев Лого" style="max-height: 65px; width: auto;">
+                </a>
+            </div>
+            <nav class="nav-links">
+                <a href="index.html">Начало</a>
+                <div class="nav-dropdown-wrap">
+                    <a href="portfolio.html" class="nav-active">Портфолио <span class="nav-chevron">▾</span></a>
+                    <div class="nav-dropdown">
+                        <a href="portfolio.html?category=corporate">Рекламна и Корпоративна Фотография</a>
+                        <a href="portfolio.html?category=corporate_portrait">Корпоративен Портрет – Бизнес Портрет</a>
+                        <a href="portfolio.html?category=fashion">Модна Фотография</a>
+                        <a href="portfolio.html?category=portrait">Портретна Фотография</a>
+                        <a href="portfolio.html?category=ambrotype">Амбротипия</a>
+                        <a href="portfolio.html?category=sport">Спорт и Танц</a>
+                        <a href="portfolio.html?category=video">Видео</a>
+                    </div>
+                </div>
+                <a href="about.html">За мен</a>
+                <a href="index.html#contact">Контакт</a>
+                <a href="https://www.petarpeshev.com/bg/" target="_blank" class="btn-primary" style="padding: 0.5rem 1rem; background: #fff; color: #000; border: none;">BLOG</a>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Page Header -->
+        <section class="port-header">
+            <div class="container">
+                <div class="port-header-inner">
+                    <span class="port-header-label">— ТВОРЧЕСТВО</span>
+                    <h1 id="portfolio-title">Портфолио</h1>
+                    <p id="category-description" class="port-category-desc"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Grid -->
+        <section class="port-grid-section">
+            <div class="container">
+                <div class="portfolio-grid" id="portfolio-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <img src="images/PPP-2.png" alt="Петър Пешев Лого" style="max-height: 40px; margin-bottom: 20px;">
+                <p>Професионална фотография от най-висок клас.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Петър Пешев. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Затвори">&#x2715;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Предишна">&#8592;</button>
+        <div class="lightbox-img-wrap">
+            <img id="lightbox-img" src="" alt="">
+        </div>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Следваща">&#8594;</button>
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
