@@ -1,10 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    let portfolioData = window.portfolioData || { categories: [], items: [] };
+    try {
+        const _r = await fetch('/api/portfolio');
+        if (_r.ok) portfolioData = await _r.json();
+    } catch (_e) {}
+
     const portfolioGrid = document.getElementById('portfolio-grid');
     const categoryGrid = document.getElementById('category-grid');
     const filtersContainer = document.getElementById('portfolio-filters');
     const categoryDesc = document.getElementById('category-description');
     const portfolioTitle = document.getElementById('portfolio-title');
-    
+
     const categories = portfolioData.categories || [];
     const items = portfolioData.items || [];
     

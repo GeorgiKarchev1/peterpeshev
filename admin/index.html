@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<title>Admin — Петър Пешев</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #080808;
+  --bg2:       #111111;
+  --bg3:       #181818;
+  --accent:    #AEC637;
+  --white:     #ffffff;
+  --muted:     #a3a3a3;
+  --faint:     rgba(255,255,255,0.05);
+  --faint2:    rgba(255,255,255,0.08);
+  --border:    rgba(255,255,255,0.06);
+  --font-head: 'Cinzel', serif;
+  --font-body: 'Inter', sans-serif;
+  --ease:      0.3s cubic-bezier(0.25,0.8,0.25,1);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--white);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── LOGIN ─────────────────────────────────────────── */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+.login-wrap {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-logo {
+  font-family: var(--font-head);
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  margin-bottom: .3rem;
+  text-transform: uppercase;
+}
+.login-logo span { color: var(--accent); }
+.login-sub {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--muted);
+  margin-bottom: 2.5rem;
+}
+.login-card {
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: 2.25rem 2rem;
+  background: var(--bg2);
+}
+.login-card label {
+  display: block;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+.login-card input {
+  width: 100%;
+  padding: .7rem .9rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .875rem;
+  outline: none;
+  transition: border-color var(--ease);
+  margin-bottom: 1.25rem;
+}
+.login-card input:focus { border-color: var(--accent); }
+.login-error {
+  font-size: .75rem;
+  color: #e05c5c;
+  margin-top: .6rem;
+  display: none;
+  text-align: center;
+  letter-spacing: .04em;
+}
+
+/* ─── BUTTONS ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .6rem 1.2rem;
+  font-family: var(--font-body);
+  font-size: .75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  border: none;
+  cursor: pointer;
+  transition: all var(--ease);
+  white-space: nowrap;
+  line-height: 1;
+  text-decoration: none;
+}
+/* White fill → inverts on hover (matches main site btn-primary) */
+.btn-primary {
+  background: var(--white);
+  color: var(--bg);
+  border: 1px solid var(--white);
+}
+.btn-primary:hover {
+  background: transparent;
+  color: var(--white);
+}
+/* Outline */
+.btn-outline {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: rgba(255,255,255,.3); color: var(--white); }
+/* Accent */
+.btn-accent {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+}
+.btn-accent:hover { background: transparent; color: var(--accent); }
+/* Ghost / danger */
+.btn-ghost  { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover  { color: var(--white); border-color: rgba(255,255,255,.2); }
+.btn-danger { background: transparent; color: #e05c5c; border: 1px solid rgba(224,92,92,.4); }
+.btn-danger:hover { background: rgba(224,92,92,.1); border-color: #e05c5c; }
+.btn-sm  { padding: .45rem .9rem; font-size: .7rem; }
+.btn-xs  { padding: .28rem .6rem;  font-size: .68rem; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.login-card .btn { width: 100%; justify-content: center; }
+
+/* ─── LAYOUT ─────────────────────────────────────────── */
+#admin-panel { display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+#sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-brand {
+  padding: 1.6rem 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-brand-name {
+  font-family: var(--font-head);
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: .15em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+.sidebar-brand-sub {
+  font-size: .65rem;
+  letter-spacing: .2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.sidebar-label {
+  font-size: .6rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  padding: 1.1rem 1.5rem .4rem;
+}
+.sidebar-nav { flex: 1; padding-top: .25rem; }
+.nav-item {
+  display: flex; align-items: center; gap: .7rem;
+  padding: .62rem 1.5rem;
+  font-size: .72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+  border-left: 2px solid transparent;
+  user-select: none;
+}
+.nav-item:hover { color: var(--white); background: var(--faint); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--faint); }
+.nav-item svg { flex-shrink: 0; opacity: .7; }
+.nav-item.active svg { opacity: 1; }
+.sidebar-bottom {
+  padding: 1.1rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.sidebar-bottom .btn { width: 100%; justify-content: center; }
+
+/* Main */
+#main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.page-header {
+  padding: 1.6rem 2rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; flex-shrink: 0;
+}
+.page-header-text {}
+.page-title {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--white);
+  display: flex; align-items: center; gap: .6rem;
+}
+.page-sub { font-size: .72rem; color: var(--muted); margin-top: .25rem; letter-spacing: .02em; }
+.header-actions { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.page-body { padding: 1.6rem 2rem; flex: 1; }
+
+/* Badge */
+.badge {
+  display: inline-block;
+  background: var(--faint2);
+  color: var(--muted);
+  font-size: .62rem;
+  padding: .2rem .55rem;
+  letter-spacing: .08em;
+  font-family: var(--font-body);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* ─── FILTER ROW ─────────────────────────────────────── */
+.filter-row {
+  display: flex; gap: .4rem; flex-wrap: wrap;
+  margin-bottom: 1.25rem; align-items: center;
+}
+.filter-btn {
+  padding: .32rem .75rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: .68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-btn:hover { color: var(--white); border-color: rgba(255,255,255,.2); }
+.filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.filter-spacer { flex: 1; }
+.search-input {
+  padding: .38rem .85rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .8rem;
+  outline: none;
+  width: 200px;
+  transition: border-color .2s;
+}
+.search-input::placeholder { color: rgba(255,255,255,.2); }
+.search-input:focus { border-color: rgba(255,255,255,.2); }
+
+/* ─── DROP ZONE ──────────────────────────────────────── */
+.drop-zone {
+  border: 1px dashed rgba(255,255,255,.12);
+  padding: 1.8rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: 1.4rem;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(174,198,55,.04);
+}
+.drop-zone-icon { font-size: 1.5rem; margin-bottom: .4rem; color: rgba(255,255,255,.2); }
+.drop-zone strong { font-size: .8rem; color: var(--muted); font-weight: 500; letter-spacing: .04em; }
+.drop-zone p { font-size: .72rem; color: rgba(255,255,255,.25); margin-top: .2rem; }
+input[type="file"] { display: none; }
+
+/* ─── PHOTO GRID ─────────────────────────────────────── */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: .9rem;
+}
+.photo-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  transition: border-color var(--ease);
+  overflow: hidden;
+}
+.photo-card:hover { border-color: rgba(255,255,255,.15); }
+.photo-thumb { width:100%; height:125px; object-fit:cover; display:block; background:var(--bg3); }
+.video-thumb {
+  width:100%; height:125px; background:var(--bg3);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,.15); font-size:2rem;
+}
+.photo-info { padding: .55rem .65rem .5rem; }
+.photo-title {
+  font-size: .74rem; color: rgba(255,255,255,.8);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: .2rem; font-weight: 400;
+}
+.photo-cat-tag {
+  font-size: .62rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  display: inline-block; margin-bottom: .45rem;
+}
+.photo-actions { display: flex; gap: .3rem; align-items: center; }
+.photo-order-btns { display: flex; gap: .2rem; }
+.order-btn {
+  padding: .22rem .42rem;
+  background: var(--faint);
+  border: 1px solid var(--border);
+  color: rgba(255,255,255,.35);
+  cursor: pointer;
+  font-size: .68rem;
+  line-height: 1;
+  transition: all .15s;
+}
+.order-btn:hover:not(:disabled) { background: var(--faint2); color: var(--white); }
+.order-btn:disabled { opacity: .2; cursor: not-allowed; }
+
+/* ─── CATEGORY CARDS ─────────────────────────────────── */
+.category-list { display: flex; flex-direction: column; gap: .8rem; }
+.cat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1.25rem 1.4rem;
+  display: grid;
+  grid-template-columns: 105px 1fr auto;
+  gap: 1.25rem;
+  align-items: start;
+}
+.cat-cover-wrap { position: relative; cursor: pointer; flex-shrink: 0; }
+.cat-cover-img { width:105px; height:74px; object-fit:cover; display:block; background:var(--bg3); }
+.cat-cover-overlay {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--white); font-size:.65rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:.12em;
+  opacity:0; transition:opacity .2s;
+}
+.cat-cover-wrap:hover .cat-cover-overlay { opacity:1; }
+.cat-info { display:flex; flex-direction:column; gap:.55rem; min-width:0; }
+.cat-title-row { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+.cat-id-badge {
+  font-size:.62rem; background:var(--faint); color:var(--muted);
+  padding:.18rem .45rem; font-family:monospace; letter-spacing:.05em;
+  text-transform:none;
+}
+.cat-title-text {
+  font-family: var(--font-head);
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--white);
+  text-transform: uppercase;
+}
+.cat-desc-ta {
+  padding: .5rem .7rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: rgba(255,255,255,.7);
+  font-family: var(--font-body);
+  font-size: .78rem;
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  outline: none;
+  line-height: 1.55;
+  transition: border-color .2s;
+}
+.cat-desc-ta:focus { border-color: rgba(255,255,255,.2); }
+
+/* ─── ABOUT SLIDER ───────────────────────────────────── */
+.slider-list { display:flex; flex-direction:column; gap:.6rem; }
+.slider-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: .9rem 1rem;
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: .9rem;
+  align-items: center;
+}
+.slider-thumb { width:90px; height:56px; object-fit:cover; display:block; background:var(--bg3); }
+.slider-inputs { display:flex; flex-direction:column; gap:.45rem; }
+
+/* ─── FORM ELEMENTS ──────────────────────────────────── */
+.form-input {
+  padding: .5rem .75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .8rem;
+  outline: none;
+  width: 100%;
+  transition: border-color .2s;
+}
+.form-input::placeholder { color: rgba(255,255,255,.2); }
+.form-input:focus { border-color: rgba(255,255,255,.2); }
+select.form-input { cursor: pointer; }
+select.form-input option { background: var(--bg2); }
+.form-group { margin-bottom: .85rem; }
+.form-label {
+  display: block;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-bottom: .35rem;
+}
+.form-row { display:flex; gap:.65rem; }
+.form-row .form-group { flex:1; }
+
+/* ─── SETTINGS ───────────────────────────────────────── */
+.settings-section { max-width: 420px; display:flex; flex-direction:column; gap:1rem; }
+.settings-card { background:var(--bg2); border:1px solid var(--border); padding:1.5rem; }
+.settings-card h3 {
+  font-family: var(--font-head);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 1.1rem;
+  padding-bottom: .7rem;
+  border-bottom: 1px solid var(--border);
+}
+.info-block { background:var(--bg2); border:1px solid var(--border); padding:1.25rem; }
+.info-block h3 {
+  font-family: var(--font-head);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: .7rem;
+}
+.info-block p { color: var(--muted); font-size: .78rem; line-height: 1.7; }
+.info-block code {
+  background: var(--faint2);
+  padding: .12rem .4rem;
+  font-size: .76rem;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+
+/* ─── MODAL ──────────────────────────────────────────── */
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.88);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; padding:1.5rem;
+}
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  width: 100%; max-width: 500px;
+  max-height: 92vh; overflow-y: auto;
+}
+.modal-lg { max-width: 720px; }
+.modal-sm { max-width: 400px; }
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h3 {
+  font-family: var(--font-head);
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.modal-close {
+  background:none; border:none; color:rgba(255,255,255,.35);
+  cursor:pointer; font-size:1rem; line-height:1; padding:.2rem;
+  transition:color .15s;
+}
+.modal-close:hover { color: var(--white); }
+.modal-body { padding: 1.4rem 1.5rem; }
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: .5rem;
+}
+.edit-preview-wrap {
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg); min-height:90px; margin-bottom:1.1rem;
+  border:1px solid var(--border);
+}
+.edit-preview-wrap img { max-height:180px; max-width:100%; object-fit:contain; display:none; }
+
+/* ─── IMAGE PICKER ───────────────────────────────────── */
+.img-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: .4rem;
+  max-height: 380px;
+  overflow-y: auto;
+  margin-top: .8rem;
+}
+.img-picker-item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s;
+  position: relative;
+}
+.img-picker-item:hover { border-color: rgba(255,255,255,.3); }
+.img-picker-item.selected { border-color: var(--accent); }
+.img-picker-item img { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* ─── TOAST ──────────────────────────────────────────── */
+.toast-container {
+  position:fixed; bottom:1.5rem; right:1.5rem;
+  display:flex; flex-direction:column; gap:.4rem;
+  z-index:9999; pointer-events:none;
+}
+.toast {
+  padding: .6rem 1rem;
+  font-size: .77rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  animation: toast-in .18s ease;
+  max-width: 300px;
+  border: 1px solid;
+}
+.toast-success { background:#0d1a08; border-color:rgba(174,198,55,.4); color:var(--accent); }
+.toast-error   { background:#1a0808; border-color:rgba(224,92,92,.4);   color:#e05c5c; }
+@keyframes toast-in { from{transform:translateX(12px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* ─── MISC ───────────────────────────────────────────── */
+.empty-state { text-align:center; padding:2.5rem; color:rgba(255,255,255,.2); }
+.empty-state p { font-size:.8rem; text-transform:uppercase; letter-spacing:.1em; }
+.divider { border:none; border-top:1px solid var(--border); margin:1.1rem 0; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); }
+::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,.18); }
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">Petar <span>Peshev</span></div>
+    <div class="login-sub">Portfolio Management</div>
+    <div class="login-card">
+      <label for="login-pass">Парола</label>
+      <input type="password" id="login-pass" placeholder="Въведи паролата" autocomplete="current-password">
+      <button class="btn btn-primary" id="login-btn">Вход</button>
+      <p class="login-error" id="login-error">Невалидна парола. Опитайте отново.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADMIN PANEL ══════════════════════════════════════ -->
+<div id="admin-panel" style="display:none">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-name">Petar Peshev</div>
+      <div class="sidebar-brand-sub">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Управление</div>
+      <div class="nav-item active" data-tab="photos">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Снимки
+      </div>
+      <div class="nav-item" data-tab="categories">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 10h16M4 14h8"/></svg>
+        Категории
+      </div>
+      <div class="nav-item" data-tab="about">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8M12 17v4"/></svg>
+        За мен
+      </div>
+      <div class="sidebar-label" style="margin-top:.5rem">Акаунт</div>
+      <div class="nav-item" data-tab="settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Настройки
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn btn-outline btn-sm" id="logout-btn">Изход</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+
+    <!-- PHOTOS -->
+    <section id="tab-photos" class="tab-content">
+      <div class="page-header">
+        <div class="page-header-text">
+          <div class="page-title">Снимки <span class="badge" id="photo-count">0</span></div>
+          <div class="page-sub">Качвайте, редактирайте и наредете снимките в портфолиото</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline btn-sm" id="add-video-btn">+ Видео</button>
+          <button class="btn btn-accent btn-sm" id="upload-trigger-btn">↑ Качи снимки</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-zone-icon">⬆</div>
+          <strong>Плъзни снимки тук</strong>
+          <p>или кликни за да изберете файлове — JPG, PNG, WebP</p>
+          <input type="file" id="file-input" multiple accept="image/*">
+        </div>
+        <div class="filter-row" id="photo-filters">
+          <button class="filter-btn active" data-cat="all">Всички</button>
+          <div class="filter-spacer"></div>
+          <input class="search-input" id="photo-search" placeholder="Търсене...">
+        </div>
+        <div class="photo-grid" id="photo-grid"></div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section id="tab-categories" class="tab-content" style="display:none">
+      <div class="page-header">
+        <div class="page-header-text">
+          <div class="page-title">Категории</div>
+          <div class="page-sub">Заглавна снимка и описание за всяка категория в портфолиото</div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="category-list" id="category-list"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT SLIDER -->
+    <section id="tab-about" class="tab-content" style="display:none">
+      <div class="page-header">
+        <div class="page-header-text">
+          <div class="page-title">За мен — Слайдер</div>
+          <div class="page-sub">Снимките в слайдера на страница "За мен"</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-accent btn-sm" id="add-slide-btn">+ Добави слайд</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="slider-list" id="slider-list"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="tab-settings" class="tab-content" style="display:none">
+      <div class="page-header">
+        <div class="page-header-text">
+          <div class="page-title">Настройки</div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="settings-section">
+          <div class="settings-card">
+            <h3>Смяна на парола</h3>
+            <div class="form-group">
+              <label class="form-label">Нова парола</label>
+              <input type="password" id="new-pass" class="form-input" placeholder="Въведи нова парола">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Потвърди паролата</label>
+              <input type="password" id="confirm-pass" class="form-input" placeholder="Повтори паролата">
+            </div>
+            <button class="btn btn-primary btn-sm" id="change-pass-btn">Промени паролата</button>
+          </div>
+          <div class="settings-card">
+            <h3>Миграция на данни</h3>
+            <p style="margin-bottom:12px;color:var(--muted);font-size:13px;">Изпълни веднъж след първото качване на Vercel. Зарежда текущите данни от <code>data.js</code> в облака.</p>
+            <button class="btn btn-outline btn-sm" id="seed-btn">Seed данните в KV</button>
+          </div>
+          <div class="info-block">
+            <h3>Как работи</h3>
+            <p>
+              Данните и сесиите се пазят в Vercel KV. Снимките се качват в Vercel Blob.<br><br>
+              Отвори <code>/admin</code> на сайта и влез с паролата (по подразбиране: <code>admin123</code>).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ═══ MODALS ════════════════════════════════════════════ -->
+
+<!-- Edit Photo -->
+<div class="modal-overlay" id="edit-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="edit-modal-title">Редактирай снимка</h3>
+      <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="edit-preview-wrap">
+        <img id="edit-preview" src="" alt="">
+        <div id="edit-video-thumb" style="display:none;color:rgba(255,255,255,.15);font-size:2.5rem">▶</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <select id="edit-category" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Заглавие</label>
+        <input type="text" id="edit-title" class="form-input" placeholder="Заглавие">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Описание</label>
+        <input type="text" id="edit-description" class="form-input" placeholder="Кратко описание">
+      </div>
+      <div id="video-fields" style="display:none">
+        <hr class="divider">
+        <div class="form-group">
+          <label class="form-label">YouTube ID <small style="color:rgba(255,255,255,.3);font-size:.62rem;letter-spacing:.04em">&nbsp;youtube.com/watch?v=<strong style="color:rgba(255,255,255,.5)">ТАЗИ_ЧАСТ</strong></small></label>
+          <input type="text" id="edit-youtube-id" class="form-input" placeholder="dQw4w9WgXcQ">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Начало (секунди)</label>
+          <input type="number" id="edit-youtube-start" class="form-input" placeholder="0" min="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('edit-modal')">Отказ</button>
+      <button class="btn btn-primary btn-sm" id="edit-save-btn">Запази промените</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Video -->
+<div class="modal-overlay" id="video-modal" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Добави видео</h3>
+      <button class="modal-close" onclick="closeModal('video-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">YouTube ID</label>
+        <input type="text" id="v-youtube-id" class="form-input" placeholder="dQw4w9WgXcQ">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Заглавие</label>
+        <input type="text" id="v-title" class="form-input" placeholder="Заглавие">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Начало (секунди)</label>
+        <input type="number" id="v-start" class="form-input" placeholder="0" min="0">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('video-modal')">Отказ</button>
+      <button class="btn btn-primary btn-sm" id="video-save-btn">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Picker -->
+<div class="modal-overlay" id="img-picker-modal" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>Избери снимка</h3>
+      <button class="modal-close" onclick="closeModal('img-picker-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input class="form-input" id="img-picker-search" placeholder="Търси по файлово име...">
+      <div class="img-picker-grid" id="img-picker-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('img-picker-modal')">Отказ</button>
+      <button class="btn btn-primary btn-sm" id="img-picker-ok-btn" disabled>Избери</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="modal-overlay" id="confirm-modal" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Потвърди изтриване</h3>
+      <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-msg" style="color:var(--muted);font-size:.82rem;line-height:1.65"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('confirm-modal')">Отказ</button>
+      <button class="btn btn-danger btn-sm" id="confirm-ok-btn">Изтрий</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Slide -->
+<div class="modal-overlay" id="slide-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="slide-modal-title">Добави слайд</h3>
+      <button class="modal-close" onclick="closeModal('slide-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">URL на снимката</label>
+        <input type="text" id="slide-url" class="form-input" placeholder="https://... или images/filename.jpg">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Alt текст</label>
+        <input type="text" id="slide-alt" class="form-input" placeholder="Зад камерата">
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);min-height:70px;display:flex;align-items:center;justify-content:center;margin-top:.5rem">
+        <img id="slide-preview" src="" alt="" style="max-height:140px;max-width:100%;object-fit:contain;display:none">
+        <span id="slide-preview-ph" style="color:rgba(255,255,255,.15);font-size:.72rem;text-transform:uppercase;letter-spacing:.12em">Предварителен преглед</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('slide-modal')">Отказ</button>
+      <button class="btn btn-primary btn-sm" id="slide-save-btn">Запази</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════
+let token = localStorage.getItem('admin_token') || '';
+let data  = { categories:[], items:[], aboutSlider:[] };
+let currentCatFilter  = 'all';
+let editingItemIdx    = -1;
+let editingSlideIdx   = -1;
+let imgPickerCb       = null;
+let imgPickerSelected = null;
+let confirmCb         = null;
+let allImages         = [];
+
+const DEFAULT_SLIDER = [
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/DSC3928-2-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/DSC3219-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/DSC3046-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/DSC9938-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/DSC9934-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/20140401_114013.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/OE2A3205-copyBlog-900x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/154-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/153a-1500x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/209.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/37-1000x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/36-1000x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/34-1000x630.jpg',alt:'Зад камерата'},
+  {image:'https://petarpeshev.com/wp-content/uploads/2014/08/13b-1277x630.jpg',alt:'Зад камерата'},
+];
+
+const CAT_DEFAULT_COVERS = {
+  corporate:'images/Reklamen_fotograf_Grigor_Dimitrov-1.jpg',
+  corporate_portrait:'images/Korporativen_portret_EAE_Petar_Peshev-1.jpg',
+  fashion:'images/Modna_fotografia_Petar_Peshev-1.jpg',
+  portrait:'images/Martin_Portret_fotograf_petar_peshev-1.jpg',
+  ambrotype:'images/Ambrotipia_fotograf_Petar_Peshev-1.jpg',
+  sport:'images/Neviana_Vladinova_sportna_fotografia_petar_peshev-1.jpg',
+};
+
+// ════════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════════
+async function api(url, opts = {}) {
+  const res = await fetch(url, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'x-auth-token':token, ...(opts.headers||{}) }
+  });
+  if (res.status === 401) { token=''; localStorage.removeItem('admin_token'); showLogin(); throw new Error('Session expired'); }
+  return res;
+}
+async function apiJSON(url, opts = {}) { return (await api(url, opts)).json(); }
+async function savePortfolio() {
+  const res = await api('/api/portfolio', { method:'POST', body:JSON.stringify(data) });
+  if (!res.ok) { const j = await res.json(); throw new Error(j.error||'Save failed'); }
+}
+
+// ════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-panel').style.display  = 'none';
+}
+function showAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-panel').style.display  = 'flex';
+}
+
+async function checkAuth() {
+  if (!token) { showLogin(); return; }
+  try {
+    const res = await api('/api/portfolio');
+    if (res.ok) { data = await res.json(); }
+    else if (res.status === 404) { data = { categories: [], items: [] }; }
+    else { showLogin(); return; }
+    ensureSlider(); showAdmin(); initUI();
+  } catch { showLogin(); }
+}
+
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+
+async function doLogin() {
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:pass}) });
+    if (res.ok) {
+      const j = await res.json();
+      token = j.token; localStorage.setItem('admin_token', token);
+      const pRes = await api('/api/portfolio');
+      data = pRes.ok ? await pRes.json() : { categories: [], items: [] };
+      ensureSlider(); showAdmin(); initUI();
+    } else { errEl.style.display='block'; }
+  } catch { errEl.style.display='block'; }
+}
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  try { await api('/api/logout',{method:'POST'}); } catch {}
+  token=''; localStorage.removeItem('admin_token'); showLogin();
+});
+
+function ensureSlider() {
+  if (!data.aboutSlider?.length) data.aboutSlider = [...DEFAULT_SLIDER];
+}
+
+// ════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════
+function initUI() {
+  renderPhotoFilters(); renderPhotos(); renderCategories(); renderAboutSlider();
+}
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display='none');
+    item.classList.add('active');
+    document.getElementById('tab-'+item.dataset.tab).style.display = 'block';
+  });
+});
+
+// ════════════════════════════════════════════════════
+// PHOTOS
+// ════════════════════════════════════════════════════
+function renderPhotoFilters() {
+  const row    = document.getElementById('photo-filters');
+  const spacer = row.querySelector('.filter-spacer');
+  row.querySelectorAll('.filter-btn:not([data-cat="all"])').forEach(b=>b.remove());
+  data.categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className='filter-btn'; btn.dataset.cat=cat.id;
+    btn.textContent=cat.title;
+    row.insertBefore(btn, spacer);
+  });
+  row.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click',()=>{
+      row.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active'); currentCatFilter=btn.dataset.cat; renderPhotos();
+    });
+  });
+}
+
+function filteredItems() {
+  const q = document.getElementById('photo-search').value.toLowerCase();
+  return data.items.filter(item => {
+    const okCat  = currentCatFilter==='all' || item.category===currentCatFilter;
+    const okTerm = !q || [item.title,item.description,item.image,item.youtubeId].some(v=>v?.toLowerCase().includes(q));
+    return okCat && okTerm;
+  });
+}
+
+function renderPhotos() {
+  const grid  = document.getElementById('photo-grid');
+  const items = filteredItems();
+  document.getElementById('photo-count').textContent = data.items.length;
+  if (!items.length) { grid.innerHTML='<div class="empty-state"><p>Няма намерени снимки</p></div>'; return; }
+  grid.innerHTML='';
+  items.forEach(item => {
+    const gi = data.items.indexOf(item);
+    const card = document.createElement('div');
+    card.className='photo-card';
+    const isFirst=gi===0, isLast=gi===data.items.length-1;
+    const orderBtns=`<div class="photo-order-btns"><button class="order-btn" ${isFirst?'disabled':''} onclick="moveItem(${gi},-1)">↑</button><button class="order-btn" ${isLast?'disabled':''} onclick="moveItem(${gi},1)">↓</button></div>`;
+    const editBtn=`<button class="btn btn-ghost btn-xs" onclick="openEditModal(${gi})">✏</button>`;
+    const delBtn=`<button class="btn btn-danger btn-xs" onclick="confirmDelete(${gi})">✕</button>`;
+    if (item.type==='video') {
+      card.innerHTML=`<div class="video-thumb">▶</div><div class="photo-info"><div class="photo-title">${esc(item.title||'Видео')}</div><span class="photo-cat-tag">видео</span><div class="photo-actions">${orderBtns}${editBtn}${delBtn}</div></div>`;
+    } else {
+      const src=item.image.startsWith('http')?item.image:'/'+item.image;
+      card.innerHTML=`<img class="photo-thumb" src="${escA(src)}" alt="" loading="lazy"><div class="photo-info"><div class="photo-title">${esc(item.title||'Без заглавие')}</div><span class="photo-cat-tag">${esc(catTitle(item.category))}</span><div class="photo-actions">${orderBtns}${editBtn}${delBtn}</div></div>`;
+    }
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('photo-search').addEventListener('input', renderPhotos);
+function catTitle(id) { return data.categories.find(c=>c.id===id)?.title||id; }
+
+async function moveItem(idx, dir) {
+  const ni=idx+dir;
+  if (ni<0||ni>=data.items.length) return;
+  [data.items[idx],data.items[ni]]=[data.items[ni],data.items[idx]];
+  try { await savePortfolio(); renderPhotos(); toast('Редът е обновен','success'); }
+  catch(e){ toast(e.message,'error'); }
+}
+
+function openEditModal(idx) {
+  editingItemIdx=idx;
+  const item=data.items[idx], isVideo=item.type==='video';
+  document.getElementById('edit-modal-title').textContent=isVideo?'Редактирай видео':'Редактирай снимка';
+  const catSel=document.getElementById('edit-category');
+  catSel.innerHTML=data.categories.map(c=>`<option value="${escA(c.id)}" ${c.id===item.category?'selected':''}>${esc(c.title)}</option>`).join('');
+  document.getElementById('edit-title').value=item.title||'';
+  document.getElementById('edit-description').value=item.description||'';
+  const prev=document.getElementById('edit-preview'), vidTh=document.getElementById('edit-video-thumb');
+  if (isVideo) {
+    prev.style.display='none'; vidTh.style.display='flex';
+    document.getElementById('video-fields').style.display='block';
+    document.getElementById('edit-youtube-id').value=item.youtubeId||'';
+    document.getElementById('edit-youtube-start').value=item.youtubeStart??'';
+  } else {
+    vidTh.style.display='none'; prev.src=(item.image.startsWith('http')?item.image:'/'+item.image); prev.style.display='block';
+    document.getElementById('video-fields').style.display='none';
+  }
+  openModal('edit-modal');
+}
+
+document.getElementById('edit-save-btn').addEventListener('click', async () => {
+  const item=data.items[editingItemIdx];
+  item.category=document.getElementById('edit-category').value;
+  item.title=document.getElementById('edit-title').value;
+  item.description=document.getElementById('edit-description').value;
+  if (item.type==='video') {
+    item.youtubeId=document.getElementById('edit-youtube-id').value.trim();
+    const s=parseInt(document.getElementById('edit-youtube-start').value);
+    if (!isNaN(s)&&s>0) item.youtubeStart=s; else delete item.youtubeStart;
+  }
+  try { await savePortfolio(); closeModal('edit-modal'); renderPhotos(); toast('Запазено','success'); }
+  catch(e){ toast(e.message,'error'); }
+});
+
+function confirmDelete(idx) {
+  const item=data.items[idx];
+  const isVideo=item.type==='video';
+  const imageUrl=isVideo?null:item.image;
+  const isBlobImage=imageUrl&&imageUrl.startsWith('http');
+  const label=isVideo?`видео "${item.title}"`:imageUrl?.split('/').pop();
+  document.getElementById('confirm-msg').textContent=`Изтриване на: ${label}? ${isVideo?'Видеото ще бъде премахнато завинаги.':'Снимката ще бъде изтрита завинаги и не може да бъде възстановена.'}`;
+  confirmCb=async()=>{
+    data.items.splice(idx,1);
+    try {
+      await savePortfolio();
+      if (isBlobImage) {
+        await api(`/api/images?key=${encodeURIComponent(imageUrl.split('/').pop())}`,{method:'DELETE'});
+      }
+      closeModal('confirm-modal'); renderPhotos(); toast('Изтрито','success');
+    }
+    catch(e){ toast(e.message,'error'); }
+  };
+  openModal('confirm-modal');
+}
+document.getElementById('confirm-ok-btn').addEventListener('click',()=>{ if(confirmCb) confirmCb(); });
+
+// Add video
+document.getElementById('add-video-btn').addEventListener('click',()=>{
+  ['v-youtube-id','v-title','v-start'].forEach(id=>document.getElementById(id).value='');
+  openModal('video-modal');
+});
+document.getElementById('video-save-btn').addEventListener('click', async()=>{
+  const youtubeId=document.getElementById('v-youtube-id').value.trim();
+  if (!youtubeId){ toast('Въведи YouTube ID','error'); return; }
+  const s=parseInt(document.getElementById('v-start').value);
+  const newId=Math.max(0,...data.items.map(i=>i.id||0))+1;
+  const entry={id:newId,type:'video',category:'video',title:document.getElementById('v-title').value.trim()||'Видео',youtubeId,...((!isNaN(s)&&s>0)?{youtubeStart:s}:{})};
+  data.items.push(entry);
+  try { await savePortfolio(); closeModal('video-modal'); renderPhotos(); toast('Видеото е добавено','success'); }
+  catch(e){ data.items.pop(); toast(e.message,'error'); }
+});
+
+// ════════════════════════════════════════════════════
+// UPLOAD
+// ════════════════════════════════════════════════════
+const dropZone=document.getElementById('drop-zone'), fileInput=document.getElementById('file-input');
+document.getElementById('upload-trigger-btn').addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('click',()=>fileInput.click());
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag-over');handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));});
+fileInput.addEventListener('change',()=>{handleFiles(Array.from(fileInput.files));fileInput.value='';});
+document.body.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault();});
+document.body.addEventListener('drop',e=>{const files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));if(files.length){e.preventDefault();handleFiles(files);}});
+
+async function handleFiles(files) {
+  if (!files.length) return;
+  const fd=new FormData();
+  files.forEach(f=>fd.append('images',f));
+  try {
+    const res=await fetch('/api/upload',{method:'POST',headers:{'x-auth-token':token},body:fd});
+    const j=await res.json();
+    if (!res.ok){ toast(j.error||'Upload failed','error'); return; }
+    const newId=Math.max(0,...data.items.map(i=>i.id||0))+1;
+    const defCat=currentCatFilter!=='all'?currentCatFilter:(data.categories[0]?.id||'corporate');
+    j.uploaded.forEach((up,i)=>{ data.items.push({id:newId+i,title:'Фотография',category:defCat,image:up.path,description:catTitle(defCat)}); });
+    await savePortfolio(); renderPhotos();
+    toast(`${j.uploaded.length} снимк${j.uploaded.length===1?'а качена':'и качени'} успешно`,'success');
+  } catch(e){ toast(e.message,'error'); }
+}
+
+// ════════════════════════════════════════════════════
+// CATEGORIES
+// ════════════════════════════════════════════════════
+function renderCategories() {
+  const list=document.getElementById('category-list');
+  list.innerHTML='';
+  data.categories.forEach((cat,idx)=>{
+    const cover=cat.coverImage||CAT_DEFAULT_COVERS[cat.id]||'images/PPP-2.png';
+    const imgSrc=cover.startsWith('http')?cover:'/'+cover;
+    const card=document.createElement('div');
+    card.className='cat-card';
+    card.innerHTML=`
+      <div class="cat-cover-wrap" data-idx="${idx}">
+        <img class="cat-cover-img" src="${escA(imgSrc)}" alt="" onerror="this.src='/images/PPP-2.png'">
+        <div class="cat-cover-overlay">Смени снимка</div>
+      </div>
+      <div class="cat-info">
+        <div class="cat-title-row">
+          <span class="cat-id-badge">${esc(cat.id)}</span>
+          <span class="cat-title-text">${esc(cat.title)}</span>
+        </div>
+        <textarea class="cat-desc-ta" id="cat-desc-${idx}" rows="3" placeholder="Описание...">${esc(stripBoilerplate(cat.description||''))}</textarea>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveCategory(${idx})">Запази</button>`;
+    card.querySelector('.cat-cover-wrap').addEventListener('click',()=>{
+      openImgPicker(filename=>{
+        data.categories[idx].coverImage=filename.startsWith('http')?filename:'images/'+filename;
+        savePortfolio().then(()=>{renderCategories();toast('Заглавната снимка е обновена','success');}).catch(e=>toast(e.message,'error'));
+      });
+    });
+    list.appendChild(card);
+  });
+}
+
+async function saveCategory(idx) {
+  data.categories[idx].description=document.getElementById('cat-desc-'+idx).value;
+  try { await savePortfolio(); toast('Категорията е запазена','success'); }
+  catch(e){ toast(e.message,'error'); }
+}
+
+function stripBoilerplate(text) {
+  let t=text;
+  const c1=t.indexOf('&#8211; Рекламна фотография'); if(c1>0) t=t.substring(0,c1).trim();
+  const c2=t.indexOf('– Рекламна фотография');       if(c2>0) t=t.substring(0,c2).trim();
+  return t;
+}
+
+// ════════════════════════════════════════════════════
+// ABOUT SLIDER
+// ════════════════════════════════════════════════════
+function renderAboutSlider() {
+  const list=document.getElementById('slider-list');
+  list.innerHTML='';
+  if (!data.aboutSlider?.length){ list.innerHTML='<div class="empty-state"><p>Няма слайдове</p></div>'; return; }
+  data.aboutSlider.forEach((slide,idx)=>{
+    const src=slide.image.startsWith('http')?slide.image:'/'+slide.image;
+    const item=document.createElement('div');
+    item.className='slider-item';
+    item.innerHTML=`
+      <img class="slider-thumb" src="${escA(src)}" alt="" loading="lazy" onerror="this.style.opacity='.1'">
+      <div class="slider-inputs">
+        <input class="form-input" type="text" value="${escA(slide.image)}" placeholder="URL или images/..." data-field="image" data-idx="${idx}">
+        <input class="form-input" type="text" value="${escA(slide.alt||'')}" placeholder="Alt текст" data-field="alt" data-idx="${idx}">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-end">
+        <div style="display:flex;gap:.2rem">
+          <button class="order-btn" ${idx===0?'disabled':''} onclick="moveSlide(${idx},-1)">↑</button>
+          <button class="order-btn" ${idx===data.aboutSlider.length-1?'disabled':''} onclick="moveSlide(${idx},1)">↓</button>
+        </div>
+        <button class="btn btn-danger btn-xs" onclick="deleteSlide(${idx})">✕</button>
+      </div>`;
+    item.querySelectorAll('[data-field]').forEach(inp=>{
+      inp.addEventListener('change',async()=>{
+        data.aboutSlider[parseInt(inp.dataset.idx)][inp.dataset.field]=inp.value;
+        try { await savePortfolio(); if(inp.dataset.field==='image') renderAboutSlider(); }
+        catch(e){ toast(e.message,'error'); }
+      });
+    });
+    list.appendChild(item);
+  });
+}
+
+async function moveSlide(idx,dir){ const ni=idx+dir; if(ni<0||ni>=data.aboutSlider.length) return; [data.aboutSlider[idx],data.aboutSlider[ni]]=[data.aboutSlider[ni],data.aboutSlider[idx]]; try{await savePortfolio();renderAboutSlider();}catch(e){toast(e.message,'error');} }
+async function deleteSlide(idx){ data.aboutSlider.splice(idx,1); try{await savePortfolio();renderAboutSlider();toast('Слайдът е изтрит','success');}catch(e){toast(e.message,'error');} }
+
+document.getElementById('add-slide-btn').addEventListener('click',()=>{
+  editingSlideIdx=-1;
+  document.getElementById('slide-modal-title').textContent='Добави слайд';
+  document.getElementById('slide-url').value='';
+  document.getElementById('slide-alt').value='Зад камерата';
+  document.getElementById('slide-preview').style.display='none';
+  document.getElementById('slide-preview-ph').style.display='block';
+  openModal('slide-modal');
+});
+document.getElementById('slide-url').addEventListener('input',function(){
+  const prev=document.getElementById('slide-preview'),ph=document.getElementById('slide-preview-ph');
+  if(this.value){ prev.src=this.value.startsWith('http')?this.value:'/'+this.value; prev.style.display='block'; ph.style.display='none'; }
+  else { prev.style.display='none'; ph.style.display='block'; }
+});
+document.getElementById('slide-save-btn').addEventListener('click',async()=>{
+  const url=document.getElementById('slide-url').value.trim(), alt=document.getElementById('slide-alt').value.trim();
+  if(!url){ toast('Въведи URL','error'); return; }
+  const slide={image:url,alt:alt||'Зад камерата'};
+  if(editingSlideIdx>=0) data.aboutSlider[editingSlideIdx]=slide; else data.aboutSlider.push(slide);
+  try{await savePortfolio();closeModal('slide-modal');renderAboutSlider();toast('Слайдът е запазен','success');}catch(e){toast(e.message,'error');}
+});
+
+// ════════════════════════════════════════════════════
+// IMAGE PICKER
+// ════════════════════════════════════════════════════
+let pickerTimer=null;
+async function openImgPicker(cb){
+  imgPickerCb=cb; imgPickerSelected=null;
+  document.getElementById('img-picker-ok-btn').disabled=true;
+  document.getElementById('img-picker-search').value='';
+  try{ const res=await api('/api/images'); allImages=await res.json(); renderPickerGrid(allImages); openModal('img-picker-modal'); }
+  catch(e){ toast('Грешка при зареждане','error'); }
+}
+function renderPickerGrid(images){
+  const grid=document.getElementById('img-picker-grid'); grid.innerHTML='';
+  images.forEach(img=>{
+    const isObj=typeof img==='object';
+    const url=isObj?img.url:img;
+    const key=isObj?img.key:img;
+    const displaySrc=url.startsWith('http')?url:`/images/${escA(url)}`;
+    const label=key.split('/').pop();
+    const el=document.createElement('div'); el.className='img-picker-item'; el.dataset.filename=key;
+    el.innerHTML=`<img src="${escA(displaySrc)}" alt="${escA(label)}" loading="lazy" title="${escA(label)}">`;
+    el.addEventListener('click',()=>{ grid.querySelectorAll('.img-picker-item').forEach(i=>i.classList.remove('selected')); el.classList.add('selected'); imgPickerSelected=url; document.getElementById('img-picker-ok-btn').disabled=false; });
+    grid.appendChild(el);
+  });
+}
+document.getElementById('img-picker-search').addEventListener('input',function(){
+  clearTimeout(pickerTimer);
+  pickerTimer=setTimeout(()=>{ const q=this.value.toLowerCase(); renderPickerGrid(q?allImages.filter(f=>(typeof f==='object'?f.key:f).toLowerCase().includes(q)):allImages); },200);
+});
+document.getElementById('img-picker-ok-btn').addEventListener('click',()=>{ if(imgPickerSelected&&imgPickerCb){imgPickerCb(imgPickerSelected);closeModal('img-picker-modal');} });
+
+// ════════════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════════════
+document.getElementById('seed-btn').addEventListener('click',async()=>{
+  const secret=prompt('Въведи SEED_SECRET (от Vercel env vars):');
+  if(!secret) return;
+  try{
+    const res=await fetch('/api/seed',{method:'POST',headers:{'Content-Type':'application/json','x-seed-secret':secret},body:JSON.stringify(data)});
+    const j=await res.json();
+    if(res.ok) toast(`Seed успешен: ${j.categories} категории, ${j.items} снимки`,'success');
+    else toast(j.error,'error');
+  }catch(e){ toast(e.message,'error'); }
+});
+document.getElementById('change-pass-btn').addEventListener('click',async()=>{
+  const np=document.getElementById('new-pass').value, cp=document.getElementById('confirm-pass').value;
+  if(!np){ toast('Въведи нова парола','error'); return; }
+  if(np!==cp){ toast('Паролите не съвпадат','error'); return; }
+  if(np.length<6){ toast('Поне 6 символа','error'); return; }
+  try{
+    const res=await api('/api/change-password',{method:'POST',body:JSON.stringify({newPassword:np})});
+    if(res.ok){ document.getElementById('new-pass').value=''; document.getElementById('confirm-pass').value=''; toast('Паролата е сменена','success'); }
+    else{ const j=await res.json(); toast(j.error,'error'); }
+  }catch(e){ toast(e.message,'error'); }
+});
+
+// ════════════════════════════════════════════════════
+// MODALS
+// ════════════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).style.display='flex'; }
+function closeModal(id) {
+  document.getElementById(id).style.display='none';
+  if(id==='confirm-modal') confirmCb=null;
+  if(id==='img-picker-modal'){ imgPickerCb=null; imgPickerSelected=null; }
+}
+document.querySelectorAll('.modal-overlay').forEach(ov=>{ ov.addEventListener('click',e=>{ if(e.target===ov) closeModal(ov.id); }); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay').forEach(m=>{ if(m.style.display!=='none') closeModal(m.id); }); });
+
+// ════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════
+function toast(msg,type='success'){
+  const el=document.createElement('div'); el.className=`toast toast-${type}`; el.textContent=msg;
+  document.getElementById('toast-container').appendChild(el); setTimeout(()=>el.remove(),3500);
+}
+
+// ════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════
+function esc(s)  { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escA(s) { return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+checkAuth();
+</script>
+</body>
+</html>
