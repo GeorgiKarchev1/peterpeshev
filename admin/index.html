@@ -441,6 +441,64 @@ select.form-input option { background: var(--bg2); }
 .form-row { display:flex; gap:.65rem; }
 .form-row .form-group { flex:1; }
 
+/* ─── ADMIN CATEGORY CARDS ──────────────────────────── */
+.admin-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+.admin-cat-card {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color var(--ease), transform var(--ease);
+}
+.admin-cat-card:hover { border-color: rgba(255,255,255,.3); transform: translateY(-2px); }
+.admin-cat-card.active { border-color: var(--accent); }
+.admin-cat-card img { width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.6); transition: filter var(--ease); }
+.admin-cat-card:hover img, .admin-cat-card.active img { filter: brightness(.75); }
+.admin-cat-card-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: .6rem .8rem;
+  background: linear-gradient(transparent, rgba(0,0,0,.7));
+  font-family: var(--font-head);
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.admin-cat-card .cat-count-badge {
+  position: absolute;
+  top: .5rem; right: .5rem;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: .65rem;
+  font-weight: 700;
+  padding: .2rem .45rem;
+  border-radius: 20px;
+}
+.cat-photos-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.cat-photos-title {
+  font-family: var(--font-head);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--white);
+  flex: 1;
+}
+
 /* ─── SETTINGS ───────────────────────────────────────── */
 .settings-section { max-width: 420px; display:flex; flex-direction:column; gap:1rem; }
 .settings-card { background:var(--bg2); border:1px solid var(--border); padding:1.5rem; }
@@ -611,11 +669,6 @@ select.form-input option { background: var(--bg2); }
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8M12 17v4"/></svg>
         За мен
       </div>
-      <div class="sidebar-label" style="margin-top:.5rem">Акаунт</div>
-      <div class="nav-item" data-tab="settings">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-        Настройки
-      </div>
     </nav>
     <div class="sidebar-bottom">
       <button class="btn btn-outline btn-sm" id="logout-btn">Изход</button>
@@ -630,7 +683,7 @@ select.form-input option { background: var(--bg2); }
       <div class="page-header">
         <div class="page-header-text">
           <div class="page-title">Снимки <span class="badge" id="photo-count">0</span></div>
-          <div class="page-sub">Качвайте, редактирайте и наредете снимките в портфолиото</div>
+          <div class="page-sub">Изберете категория за да управлявате снимките в нея</div>
         </div>
         <div class="header-actions">
           <button class="btn btn-outline btn-sm" id="add-video-btn">+ Видео</button>
@@ -638,18 +691,24 @@ select.form-input option { background: var(--bg2); }
         </div>
       </div>
       <div class="page-body">
-        <div class="drop-zone" id="drop-zone">
+        <!-- Upload area (hidden until trigger) -->
+        <div class="drop-zone" id="drop-zone" style="display:none">
           <div class="drop-zone-icon">⬆</div>
           <strong>Плъзни снимки тук</strong>
           <p>или кликни за да изберете файлове — JPG, PNG, WebP</p>
           <input type="file" id="file-input" multiple accept="image/*">
         </div>
-        <div class="filter-row" id="photo-filters">
-          <button class="filter-btn active" data-cat="all">Всички</button>
-          <div class="filter-spacer"></div>
-          <input class="search-input" id="photo-search" placeholder="Търсене...">
+        <!-- Category cards grid -->
+        <div class="admin-cat-grid" id="admin-cat-grid"></div>
+        <!-- Photos for selected category -->
+        <div id="cat-photos-section" style="display:none">
+          <div class="cat-photos-header">
+            <button class="btn btn-ghost btn-sm" id="back-to-cats-btn">← Назад</button>
+            <span class="cat-photos-title" id="cat-photos-title"></span>
+            <input class="search-input" id="photo-search" placeholder="Търсене...">
+          </div>
+          <div class="photo-grid" id="photo-grid"></div>
         </div>
-        <div class="photo-grid" id="photo-grid"></div>
       </div>
     </section>
 
@@ -682,42 +741,6 @@ select.form-input option { background: var(--bg2); }
       </div>
     </section>
 
-    <!-- SETTINGS -->
-    <section id="tab-settings" class="tab-content" style="display:none">
-      <div class="page-header">
-        <div class="page-header-text">
-          <div class="page-title">Настройки</div>
-        </div>
-      </div>
-      <div class="page-body">
-        <div class="settings-section">
-          <div class="settings-card">
-            <h3>Смяна на парола</h3>
-            <div class="form-group">
-              <label class="form-label">Нова парола</label>
-              <input type="password" id="new-pass" class="form-input" placeholder="Въведи нова парола">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Потвърди паролата</label>
-              <input type="password" id="confirm-pass" class="form-input" placeholder="Повтори паролата">
-            </div>
-            <button class="btn btn-primary btn-sm" id="change-pass-btn">Промени паролата</button>
-          </div>
-          <div class="settings-card">
-            <h3>Миграция на данни</h3>
-            <p style="margin-bottom:12px;color:var(--muted);font-size:13px;">Изпълни веднъж след първото качване на Vercel. Зарежда текущите данни от <code>data.js</code> в облака.</p>
-            <button class="btn btn-outline btn-sm" id="seed-btn">Seed данните в KV</button>
-          </div>
-          <div class="info-block">
-            <h3>Как работи</h3>
-            <p>
-              Данните и сесиите се пазят в Vercel KV. Снимките се качват в Vercel Blob.<br><br>
-              Отвори <code>/admin</code> на сайта и влез с паролата (по подразбиране: <code>admin123</code>).
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
 </div>
@@ -791,6 +814,23 @@ select.form-input option { background: var(--bg2); }
     <div class="modal-footer">
       <button class="btn btn-outline btn-sm" onclick="closeModal('video-modal')">Отказ</button>
       <button class="btn btn-primary btn-sm" id="video-save-btn">Добави</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Category Picker -->
+<div class="modal-overlay" id="upload-cat-modal" style="display:none">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header"><div class="modal-title">Избери категория за качване</div></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <select class="form-input" id="upload-cat-select"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('upload-cat-modal')">Отказ</button>
+      <button class="btn btn-accent btn-sm" id="upload-cat-confirm-btn">Избери файлове →</button>
     </div>
   </div>
 </div>
@@ -972,7 +1012,8 @@ function ensureSlider() {
 // NAVIGATION
 // ════════════════════════════════════════════════════
 function initUI() {
-  renderPhotoFilters(); renderPhotos(); renderCategories(); renderAboutSlider();
+  renderAdminCategoryCards(); renderCategories(); renderAboutSlider();
+  document.getElementById('photo-count').textContent = data.items.length;
 }
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
@@ -986,26 +1027,51 @@ document.querySelectorAll('.nav-item').forEach(item => {
 // ════════════════════════════════════════════════════
 // PHOTOS
 // ════════════════════════════════════════════════════
-function renderPhotoFilters() {
-  const row    = document.getElementById('photo-filters');
-  const spacer = row.querySelector('.filter-spacer');
-  row.querySelectorAll('.filter-btn:not([data-cat="all"])').forEach(b=>b.remove());
+function renderPhotoFilters() { renderAdminCategoryCards(); }
+
+function renderAdminCategoryCards() {
+  const grid = document.getElementById('admin-cat-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
   data.categories.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className='filter-btn'; btn.dataset.cat=cat.id;
-    btn.textContent=cat.title;
-    row.insertBefore(btn, spacer);
-  });
-  row.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click',()=>{
-      row.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active'); currentCatFilter=btn.dataset.cat; renderPhotos();
-    });
+    const count = data.items.filter(i => i.category === cat.id).length;
+    const cover = cat.coverImage || CAT_DEFAULT_COVERS[cat.id] || 'images/PPP-2.png';
+    const src = cover.startsWith('http') ? cover : '/' + cover;
+    const card = document.createElement('div');
+    card.className = 'admin-cat-card';
+    card.innerHTML = `
+      <img src="${escA(src)}" alt="${escA(cat.title)}" loading="lazy" onerror="this.src='/images/PPP-2.png'">
+      <span class="cat-count-badge">${count}</span>
+      <div class="admin-cat-card-label">${esc(cat.title)}</div>
+    `;
+    card.addEventListener('click', () => openCategoryPhotos(cat.id));
+    grid.appendChild(card);
   });
 }
 
+function openCategoryPhotos(catId) {
+  currentCatFilter = catId;
+  document.getElementById('admin-cat-grid').style.display = 'none';
+  document.getElementById('cat-photos-section').style.display = 'block';
+  const cat = data.categories.find(c => c.id === catId);
+  document.getElementById('cat-photos-title').textContent = cat ? cat.title : catId;
+  document.getElementById('photo-search').value = '';
+  renderPhotos();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const backBtn = document.getElementById('back-to-cats-btn');
+  if (backBtn) backBtn.addEventListener('click', () => {
+    currentCatFilter = 'all';
+    document.getElementById('cat-photos-section').style.display = 'none';
+    document.getElementById('admin-cat-grid').style.display = 'grid';
+    renderAdminCategoryCards();
+  });
+});
+
 function filteredItems() {
-  const q = document.getElementById('photo-search').value.toLowerCase();
+  const searchEl = document.getElementById('photo-search');
+  const q = searchEl ? searchEl.value.toLowerCase() : '';
   return data.items.filter(item => {
     const okCat  = currentCatFilter==='all' || item.category===currentCatFilter;
     const okTerm = !q || [item.title,item.description,item.image,item.youtubeId].some(v=>v?.toLowerCase().includes(q));
@@ -1125,14 +1191,33 @@ document.getElementById('video-save-btn').addEventListener('click', async()=>{
 // UPLOAD
 // ════════════════════════════════════════════════════
 const dropZone=document.getElementById('drop-zone'), fileInput=document.getElementById('file-input');
-document.getElementById('upload-trigger-btn').addEventListener('click',()=>fileInput.click());
+
+function showDropZone(show) {
+  dropZone.style.display = show ? 'flex' : 'none';
+}
+
+document.getElementById('upload-trigger-btn').addEventListener('click',()=>{
+  if (currentCatFilter !== 'all') { fileInput.click(); }
+  else { openUploadCategoryModal(); }
+});
 dropZone.addEventListener('click',()=>fileInput.click());
 dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('drag-over');});
 dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag-over'));
 dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('drag-over');handleFiles(Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')));});
 fileInput.addEventListener('change',()=>{handleFiles(Array.from(fileInput.files));fileInput.value='';});
-document.body.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('Files'))e.preventDefault();});
-document.body.addEventListener('drop',e=>{const files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));if(files.length){e.preventDefault();handleFiles(files);}});
+
+function openUploadCategoryModal() {
+  const sel = document.getElementById('upload-cat-select');
+  sel.innerHTML = data.categories.map(c=>`<option value="${escA(c.id)}">${esc(c.title)}</option>`).join('');
+  openModal('upload-cat-modal');
+}
+document.getElementById('upload-cat-confirm-btn').addEventListener('click',()=>{
+  const catId = document.getElementById('upload-cat-select').value;
+  closeModal('upload-cat-modal');
+  currentCatFilter = catId;
+  openCategoryPhotos(catId);
+  fileInput.click();
+});
 
 async function handleFiles(files) {
   if (!files.length) return;
@@ -1145,7 +1230,7 @@ async function handleFiles(files) {
     const newId=Math.max(0,...data.items.map(i=>i.id||0))+1;
     const defCat=currentCatFilter!=='all'?currentCatFilter:(data.categories[0]?.id||'corporate');
     j.uploaded.forEach((up,i)=>{ data.items.push({id:newId+i,title:'Фотография',category:defCat,image:up.path,description:catTitle(defCat)}); });
-    await savePortfolio(); renderPhotos();
+    await savePortfolio(); renderAdminCategoryCards(); renderPhotos();
     toast(`${j.uploaded.length} снимк${j.uploaded.length===1?'а качена':'и качени'} успешно`,'success');
   } catch(e){ toast(e.message,'error'); }
 }
@@ -1291,27 +1376,6 @@ document.getElementById('img-picker-ok-btn').addEventListener('click',()=>{ if(i
 // ════════════════════════════════════════════════════
 // SETTINGS
 // ════════════════════════════════════════════════════
-document.getElementById('seed-btn').addEventListener('click',async()=>{
-  const secret=prompt('Въведи SEED_SECRET (от Vercel env vars):');
-  if(!secret) return;
-  try{
-    const res=await fetch('/api/seed',{method:'POST',headers:{'Content-Type':'application/json','x-seed-secret':secret},body:JSON.stringify(data)});
-    const j=await res.json();
-    if(res.ok) toast(`Seed успешен: ${j.categories} категории, ${j.items} снимки`,'success');
-    else toast(j.error,'error');
-  }catch(e){ toast(e.message,'error'); }
-});
-document.getElementById('change-pass-btn').addEventListener('click',async()=>{
-  const np=document.getElementById('new-pass').value, cp=document.getElementById('confirm-pass').value;
-  if(!np){ toast('Въведи нова парола','error'); return; }
-  if(np!==cp){ toast('Паролите не съвпадат','error'); return; }
-  if(np.length<6){ toast('Поне 6 символа','error'); return; }
-  try{
-    const res=await api('/api/change-password',{method:'POST',body:JSON.stringify({newPassword:np})});
-    if(res.ok){ document.getElementById('new-pass').value=''; document.getElementById('confirm-pass').value=''; toast('Паролата е сменена','success'); }
-    else{ const j=await res.json(); toast(j.error,'error'); }
-  }catch(e){ toast(e.message,'error'); }
-});
 
 // ════════════════════════════════════════════════════
 // MODALS
