@@ -5,5 +5,10 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/admin", "destination": "/admin/index.html" }
-  ]
+  ],
+  "functions": {
+    "api/seed.js": {
+      "includeFiles": "data.js"
+    }
+  }
 }
