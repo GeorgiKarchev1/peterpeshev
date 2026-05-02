@@ -698,6 +698,14 @@ select.form-input option { background: var(--bg2); }
           <p>или кликни за да изберете файлове — JPG, PNG, WebP</p>
           <input type="file" id="file-input" multiple accept="image/*">
         </div>
+        <!-- Empty state / seed banner -->
+        <div id="seed-banner" style="display:none;background:var(--bg2);border:1px solid var(--accent);padding:1.5rem 2rem;margin-bottom:1.5rem;display:none;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+          <div style="flex:1">
+            <div style="font-family:var(--font-head);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem">Базата данни е празна</div>
+            <div style="color:var(--muted);font-size:13px;">Зареди всички снимки и категории от data.js в облака с един клик.</div>
+          </div>
+          <button class="btn btn-accent btn-sm" id="seed-now-btn">Зареди данните →</button>
+        </div>
         <!-- Category cards grid -->
         <div class="admin-cat-grid" id="admin-cat-grid"></div>
         <!-- Photos for selected category -->
@@ -1014,7 +1022,26 @@ function ensureSlider() {
 function initUI() {
   renderAdminCategoryCards(); renderCategories(); renderAboutSlider();
   document.getElementById('photo-count').textContent = data.items.length;
+  const banner = document.getElementById('seed-banner');
+  if (banner) banner.style.display = data.items.length === 0 ? 'flex' : 'none';
 }
+
+document.getElementById('seed-now-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('seed-now-btn');
+  btn.textContent = 'Зареждане...'; btn.disabled = true;
+  try {
+    const res = await api('/api/seed', { method: 'POST' });
+    const j = await res.json();
+    if (res.ok) {
+      toast(`Заредени: ${j.categories} категории, ${j.items} снимки`, 'success');
+      const pRes = await api('/api/portfolio');
+      if (pRes.ok) { data = await pRes.json(); initUI(); }
+    } else {
+      toast(j.error || 'Грешка при seed', 'error');
+      btn.textContent = 'Зареди данните →'; btn.disabled = false;
+    }
+  } catch(e) { toast(e.message, 'error'); btn.textContent = 'Зареди данните →'; btn.disabled = false; }
+});
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', () => {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));

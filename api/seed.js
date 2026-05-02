@@ -1,21 +1,39 @@
 import { kv } from '@vercel/kv';
 
-// One-time endpoint to seed KV with portfolio data from the client.
-// Call: POST /api/seed with the portfolioData JSON in the body.
-// Protected by a seed secret stored in KV (or env var SEED_SECRET).
+async function requireAuth(req) {
+    const token = req.headers['x-auth-token'];
+    if (!token) return false;
+    return !!(await kv.get(`session:${token}`));
+}
+
+// Seeds KV from the statically-served data.js on the same domain.
+// Protected by admin auth token.
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).end();
+    if (!(await requireAuth(req))) return res.status(401).json({ error: 'Unauthorized' });
 
-    const secret = process.env.SEED_SECRET || 'seed-me-once';
-    if (req.headers['x-seed-secret'] !== secret) {
-        return res.status(401).json({ error: 'Forbidden' });
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+    const host = req.headers.host;
+    const dataJsUrl = `${protocol}://${host}/data.js`;
+
+    const r = await fetch(dataJsUrl);
+    if (!r.ok) return res.status(500).json({ error: `Could not fetch data.js: ${r.status}` });
+
+    const text = await r.text();
+    const json = text
+        .replace(/^\s*var\s+portfolioData\s*=\s*/, '')
+        .replace(/;\s*$/, '')
+        .trim();
+
+    let portfolioData;
+    try { portfolioData = JSON.parse(json); } catch (e) {
+        return res.status(500).json({ error: 'Could not parse data.js: ' + e.message });
     }
 
-    const data = req.body;
-    if (!data?.categories || !data?.items) {
-        return res.status(400).json({ error: 'Invalid data: expected {categories, items}' });
+    if (!portfolioData?.categories || !portfolioData?.items) {
+        return res.status(400).json({ error: 'Invalid data structure in data.js' });
     }
 
-    await kv.set('portfolio', data);
-    res.json({ ok: true, categories: data.categories.length, items: data.items.length });
+    await kv.set('portfolio', portfolioData);
+    res.json({ ok: true, categories: portfolioData.categories.length, items: portfolioData.items.length });
 }
