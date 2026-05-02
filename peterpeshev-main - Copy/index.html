@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Петър Пешев | Професионален Фотограф</title>
+    <meta name="description"
+        content="Петър Пешев е професионален фотограф с 20 години опит и магистърска степен. Експерт в рекламна, корпоративна, портретна и модна фотография.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="#home">
+                    <img src="images/PPP-2.png" alt="Петър Пешев Лого" style="max-height: 65px; width: auto;">
+                </a>
+            </div>
+            <nav class="nav-links">
+                <a href="/">Начало</a>
+                <div class="nav-dropdown-wrap">
+                    <a href="/portfolio">Портфолио <span class="nav-chevron">▾</span></a>
+                    <div class="nav-dropdown">
+                        <a href="/portfolio?category=corporate">Рекламна и Корпоративна Фотография</a>
+                        <a href="/portfolio?category=corporate_portrait">Корпоративен Портрет – Бизнес Портрет</a>
+                        <a href="/portfolio?category=fashion">Модна Фотография</a>
+                        <a href="/portfolio?category=portrait">Портретна Фотография</a>
+                        <a href="/portfolio?category=ambrotype">Амбротипия</a>
+                        <a href="/portfolio?category=sport">Спорт и Танц</a>
+                        <a href="/portfolio?category=video">Видео</a>
+                    </div>
+                </div>
+                <a href="/about">За мен</a>
+                <a href="/#contact">Контакт</a>
+                <a href="https://www.petarpeshev.com/bg/" target="_blank" class="btn-primary"
+                    style="padding: 0.5rem 1rem; background: #fff; color: #000; border: none;">BLOG</a>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-bg-glow"></div>
+            <div class="hero-content container">
+                <div class="hero-eyebrow">
+                    <span class="hero-line"></span>
+                    <span>ПРОФЕСИОНАЛЕН ФОТОГРАФ</span>
+                    <span class="hero-line"></span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="hero-title-line">Визуално</span>
+                    <span class="hero-title-line hero-title-accent">съвършенство</span>
+                </h1>
+                <p class="hero-subtitle">20 години безкомпромисна фотография в корпоративния, рекламния и портретния
+                    жанр.</p>
+                <div class="hero-actions">
+                    <a href="/portfolio" class="btn-secondary">Разгледай Портфолио</a>
+                    <a href="#about" class="btn-text">За мен &rarr;</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span>20<sup>+</sup></span>
+                        <p>години опит</p>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span>100<sup>+</sup></span>
+                        <p>кампании</p>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span>1000<sup>+</sup></span>
+                        <p>заснети лица</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="portfolio-section">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <h2>Категории</h2>
+                    <p style="color: var(--text-secondary); margin-top: 1rem; max-width: 600px;">Изберете категория, за
+                        да разгледате пълното портфолио и конкретни проекти.</p>
+                </div>
+                <div class="category-grid" id="category-grid">
+                    <!-- This will be populated dynamically from data.js based on its categories array -->
+                </div>
+            </div>
+        </section>
+
+
+        <section id="contact" class="contact-section">
+            <div class="container contact-container">
+                <div class="contact-info" data-animate="fade-right">
+                    <h2>Готови ли сте за следващия проект?</h2>
+                    <p>Свържете се с нас за да обсъдим визията и нуждите на Вашия бранд.</p>
+                    <div class="contact-details">
+                        <p class="contact-name">Петър Пешев</p>
+                        <p><a href="tel:+359893577057">0893 577 057</a></p>
+                        <p><a href="mailto:info@petarpeshev.com">info@petarpeshev.com</a></p>
+                        <p><a href="https://www.petarpeshev.com" target="_blank">www.petarpeshev.com</a></p>
+                    </div>
+                </div>
+                <div class="contact-form" data-animate="fade-left">
+                    <form action="#" method="POST">
+                        <div class="form-group">
+                            <input type="text" id="name" required placeholder="Вашето име">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" required placeholder="Вашият email">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" rows="4" required placeholder="Относно..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Изпрати Запитване</button>
+                    </form>
+                </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-col">
+                <h4>Нашите възможности</h4>
+                <ul class="footer-list">
+                    <li>Рекламна фотография</li>
+                    <li>Корпоративна фотография</li>
+                    <li>Корпоративен портрет</li>
+                    <li>Модна фотография</li>
+                    <li>Портретна фотография</li>
+                    <li>Интериорна фотография</li>
+                    <li>Студийна фотография</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Работно време</h4>
+                <ul class="footer-list">
+                    <li>Понеделник – Петък: 9:00 – 17:00</li>
+                    <li>Събота: 10:00 – 14:00</li>
+                    <li>Неделя: Затворено</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Петър Пешев. Всички права запазени.</p>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
