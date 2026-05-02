@@ -1,4 +1,4 @@
-const portfolioData = {
+var portfolioData = {
     "categories": [
         {
             "id": "corporate",
